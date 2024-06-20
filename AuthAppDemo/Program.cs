@@ -6,6 +6,7 @@ using System.Text;
 using AuthAppDemoLog;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+using AuthAppDemoDB.Models;
 
 namespace AuthAppDemo
 {
@@ -24,7 +25,7 @@ namespace AuthAppDemo
 
             var jwtInfo = builder.Configuration.GetSection("jwt").Get<JwtInfo>();
             var dbLoggerOptions = builder.Configuration.GetSection("Logging:Database:Options").Get<DbLoggerOptions>();
-
+            builder.Services.AddSqlServer<AuthDemo01Context>(builder.Configuration.GetConnectionString("main"));
 
             builder.Services.AddSingleton(jwtInfo);
 
