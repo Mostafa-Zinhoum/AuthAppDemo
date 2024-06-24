@@ -8,17 +8,25 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using AuthAppDemoService.Basics.Impelmentation;
+using AuthAppDemoService.Basics.Interfaces;
 
 namespace AuthAppDemoService
 {
     public static class AuthServiceExtensions
     {
         public static IServiceCollection AddAuthSerices(this IServiceCollection services,
-            JwtInfo jwtInfo)
+            JwtInfo jwtInfo, IServiceCollection DBServices)
         {
             
             services.AddSingleton<IAuthorize, Authorize>();
             services.AddSingleton<IUserService, UserService>();
+            services.AddScoped<IWorxDB>(x =>
+                    new WorxDB(services, DBServices)
+                );
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IContextsFactor, ContextsFactor>();
+
             services.AddAuthentication()
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, option =>
                 {

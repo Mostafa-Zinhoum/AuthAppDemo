@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AuthAppDemoService.Basics.Dtos;
+using AuthAppDemoService.Basics.Impelmentation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -8,6 +10,64 @@ using System.Threading.Tasks;
 namespace AuthAppDemoService.Basics.Interfaces
 {
 
+    public interface IRepository<TEntity> : IDisposable where TEntity : class
+    {
+
+
+        #region Get And Search Filters Operations
+
+
+        Task<List<TEntity>> GetAll();
+        Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> BWhere);
+        Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> BWhere, Expression<Func<TEntity, Int64>> KeyOrder, Enum_DB_Order_By orderBy = Enum_DB_Order_By.Ascending, int Page_Index = 0, int Page_Count = 0);
+        Task<Pagination_Result> GetPagination(int Page_Index = 0, int Page_Count = 0);
+        Task<Pagination_Result> GetPagination(Expression<Func<TEntity, bool>> BWhere, Expression<Func<TEntity, Int64>> KeyOrder, Enum_DB_Order_By orderBy = Enum_DB_Order_By.Ascending, int Page_Index = 0, int Page_Count = 0);
+        Task<TEntity> GetSingle(Expression<Func<TEntity, bool>> BWhere);
+        Task<TEntity> FirstOrDefault();
+        Task<TEntity> FirstOrDefault(Expression<Func<TEntity, bool>> BWhere);
+        Task<TEntity> LastOrDefault(Expression<Func<TEntity, dynamic>> keySelector);
+        Task<TEntity> LastOrDefault(Expression<Func<TEntity, dynamic>> keySelector, Expression<Func<TEntity, bool>> BWhere);
+
+
+        #endregion
+
+        #region Numberic Operations
+
+        Task<Int64> Max(Expression<Func<TEntity, Int64>> KeyMax);
+        Task<Int64> Max(Expression<Func<TEntity, Int64>> KeyMax, Expression<Func<TEntity, bool>> BWhere);
+        Task<Int64> Count();
+        Task<Int64> Count(Expression<Func<TEntity, bool>> BWhere);
+
+        #endregion
+
+        #region Row Operations
+
+        Task<TEntity> Insert(TEntity entity);
+        Task<TEntity> Update(TEntity entity);
+        Task<TEntity> Delete(TEntity entity);
+
+        #endregion
+
+        #region Rows List Operations
+
+        Task<List<TEntity>> Insert(List<TEntity> entities);
+        Task<List<TEntity>> Update(List<TEntity> entities);
+        Task<List<TEntity>> Delete(List<TEntity> entities);
+        Task<List<TEntity>> Delete(Expression<Func<TEntity, bool>> BWhere);
+
+        #endregion
+
+        #region DB Query
+
+        Task<List<TEntity>> ExecSP(string SP_Name, Dictionary<string, string> SP_Parameters);
+        Task<int> ExecQuery(string Query_String);
+        Task<Object> DataQuery(string Query_String);
+
+        #endregion
+
+
+    }
+    /*
     //
     // Summary:
     //     This interface must be implemented by all repositories to identify them by convention.
@@ -554,4 +614,5 @@ namespace AuthAppDemoService.Basics.Interfaces
         //     Count of entities
         Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate);
     }
+    */
 }

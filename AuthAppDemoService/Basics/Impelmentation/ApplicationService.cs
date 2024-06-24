@@ -25,20 +25,20 @@ namespace AuthAppDemoService.Basics.Impelmentation
         /// <summary>
         /// Reference to <see cref="IUnitOfWorkManager"/>.
         /// </summary>
-        public IUnitOfWorkManager UnitOfWorkManager
+        public IUnitOfWork UnitOfWork
         {
             get
             {
-                if (_unitOfWorkManager == null)
+                if (_unitOfWork == null)
                 {
                     throw new Exception("Must set UnitOfWorkManager before use it.");
                 }
 
-                return _unitOfWorkManager;
+                return _unitOfWork;
             }
-            set { _unitOfWorkManager = value; }
+            set { _unitOfWork = value; }
         }
-        private IUnitOfWorkManager _unitOfWorkManager;
+        private IUnitOfWork _unitOfWork;
     }
 
     /// <summary>
@@ -50,13 +50,17 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntityDto : IEntityDto<TPrimaryKey>
         where TUpdateInput : IEntityDto<TPrimaryKey>
     {
-        protected readonly IRepository<TEntity, TPrimaryKey> Repository;
+        //protected readonly IRepository<TEntity> Repository;
 
-        protected CrudAppServiceBase(IRepository<TEntity, TPrimaryKey> repository)
+        //protected CrudAppServiceBase(IRepository<TEntity> repository)
+        //{
+        //    Repository = repository;
+        //}
+
+        protected CrudAppServiceBase(IUnitOfWork unitOfWork)
         {
-            Repository = repository;
+            UnitOfWork = unitOfWork;
         }
-
         /// <summary>
         /// Should apply sorting if needed.
         /// </summary>
@@ -169,7 +173,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity, TPrimaryKey> repository)
+        protected AsyncCrudAppService(IRepository<TEntity> repository)
             : base(repository)
         {
 
@@ -181,7 +185,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity, TPrimaryKey> repository)
+        protected AsyncCrudAppService(IRepository<TEntity> repository)
             : base(repository)
         {
 
@@ -195,7 +199,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntityDto : IEntityDto<TPrimaryKey>
        where TCreateInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity, TPrimaryKey> repository)
+        protected AsyncCrudAppService(IRepository<TEntity> repository)
             : base(repository)
         {
 
@@ -208,7 +212,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntityDto : IEntityDto<TPrimaryKey>
         where TUpdateInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity, TPrimaryKey> repository)
+        protected AsyncCrudAppService(IRepository<TEntity> repository)
             : base(repository)
         {
 
@@ -222,7 +226,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TUpdateInput : IEntityDto<TPrimaryKey>
         where TGetInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity, TPrimaryKey> repository)
+        protected AsyncCrudAppService(IRepository<TEntity> repository)
             : base(repository)
         {
 
@@ -238,12 +242,17 @@ namespace AuthAppDemoService.Basics.Impelmentation
            where TGetInput : IEntityDto<TPrimaryKey>
            where TDeleteInput : IEntityDto<TPrimaryKey>
     {
-        public IAsyncQueryableExecuter AsyncQueryableExecuter { get; set; }
+        
 
-        protected AsyncCrudAppService(IRepository<TEntity, TPrimaryKey> repository)
-            : base(repository)
+        //protected AsyncCrudAppService(IRepository<TEntity> repository)
+        //    : base(repository)
+        //{
+        //    AsyncQueryableExecuter = NullAsyncQueryableExecuter.Instance;
+        //}
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
-            AsyncQueryableExecuter = NullAsyncQueryableExecuter.Instance;
+            
         }
 
         public virtual async Task<TEntityDto> GetAsync(TGetInput input)
@@ -260,7 +269,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
 
             var query = CreateFilteredQuery(input);
 
-            var totalCount = await AsyncQueryableExecuter.CountAsync(query);
+            var totalCount = await UnitOfWork.Repository<TEntity>().Count(); //AsyncQueryableExecuter.CountAsync(query);
 
             query = ApplySorting(query, input);
             query = ApplyPaging(query, input);
@@ -280,7 +289,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
             var entity = MapToEntity(input);
 
             await Repository.InsertAsync(entity);
-            await CurrentUnitOfWork.SaveChangesAsync();
+            await UnitOfWork.SaveChangesAsync();
 
             return MapToEntityDto(entity);
         }
@@ -292,21 +301,21 @@ namespace AuthAppDemoService.Basics.Impelmentation
             var entity = await GetEntityByIdAsync(input.Id);
 
             MapToEntity(input, entity);
-            await CurrentUnitOfWork.SaveChangesAsync();
+            await UnitOfWork.SaveChangesAsync();
 
             return MapToEntityDto(entity);
         }
 
-        public virtual Task DeleteAsync(TDeleteInput input)
+        public virtual async Task DeleteAsync(TDeleteInput input)
         {
             //CheckDeletePermission();
 
-            return Repository.DeleteAsync(input.Id);
+            return await UnitOfWork.Repository<TEntity>().DeleteAsync(input.Id);
         }
 
         protected virtual Task<TEntity> GetEntityByIdAsync(TPrimaryKey id)
         {
-            return Repository.GetAsync(id);
+            return await Repository.GetAsync(id);
         }
     }
 

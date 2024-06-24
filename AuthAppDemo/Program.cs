@@ -7,6 +7,7 @@ using AuthAppDemoLog;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using AuthAppDemoDB.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthAppDemo
 {
@@ -25,13 +26,19 @@ namespace AuthAppDemo
 
             var jwtInfo = builder.Configuration.GetSection("jwt").Get<JwtInfo>();
             var dbLoggerOptions = builder.Configuration.GetSection("Logging:Database:Options").Get<DbLoggerOptions>();
-            builder.Services.AddSqlServer<AuthDemo01Context>(builder.Configuration.GetConnectionString("main"));
+            IServiceCollection DBServices = new ServiceCollection();
+
+            DBServices.AddDbContext<AuthDemo01Context>(options =>
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("main")),
+                    ServiceLifetime.Scoped);
+
+            //builder.Services.AddSqlServer<AuthDemo01Context>(builder.Configuration.GetConnectionString("main"));
 
             builder.Services.AddSingleton(jwtInfo);
 
             // add AuthAppDemoServices Injection by call extension method from AuthAppDemoServices Project
             // I do that to hide Service Impelmention calling form controllers
-            builder.Services.AddAuthSerices(jwtInfo);
+            builder.Services.AddAuthSerices(jwtInfo, DBServices);
 
 
 
