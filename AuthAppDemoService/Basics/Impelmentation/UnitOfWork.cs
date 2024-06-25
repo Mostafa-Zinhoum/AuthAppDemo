@@ -78,13 +78,13 @@ namespace AuthAppDemoService.Basics.Impelmentation
             return _ContextsFactor.Commit();
         }
 
-        public Task<List<int>> CommitAsync()
+        public List<Task<int>> CommitAsync()
         {
-            return await _ContextsFactor.CommitAsync();
+            return _ContextsFactor.CommitAsync();
         }
 
         #endregion
-        
+
         #region Dispose
 
         public void Dispose()
@@ -104,6 +104,10 @@ namespace AuthAppDemoService.Basics.Impelmentation
             }
             this._Disposed = true;
         }
+
+        
+
+       
 
         #endregion
 

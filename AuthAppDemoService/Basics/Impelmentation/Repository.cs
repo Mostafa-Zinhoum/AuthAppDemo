@@ -35,7 +35,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
 
         public async Task<List<TEntity>> GetAll()
         {
-            return await _DBSet.ToListAsync();
+            return await _DBSet.ToListAsync();            
         }
 
         public async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> BWhere)

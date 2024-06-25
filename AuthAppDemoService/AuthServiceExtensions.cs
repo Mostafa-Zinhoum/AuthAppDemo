@@ -18,7 +18,13 @@ namespace AuthAppDemoService
         public static IServiceCollection AddAuthSerices(this IServiceCollection services,
             JwtInfo jwtInfo, IServiceCollection DBServices)
         {
-            
+            // Register AutoMapper
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            // Register IObjectMapper
+            services.AddScoped<IObjectMapper, ObjectMapper>();
+
+
             services.AddSingleton<IAuthorize, Authorize>();
             services.AddSingleton<IUserService, UserService>();
             services.AddScoped<IWorxDB>(x =>

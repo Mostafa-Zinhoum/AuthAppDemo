@@ -1,10 +1,13 @@
 ﻿using AuthAppDemoService.Basics.Dtos;
 using AuthAppDemoService.Basics.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,6 +69,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         /// </summary>
         /// <param name="query">The query.</param>
         /// <param name="input">The input.</param>
+        ///
+        /*
         protected virtual IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, TGetAllInput input)
         {
             //Try to sort query if available
@@ -87,12 +92,14 @@ namespace AuthAppDemoService.Basics.Impelmentation
             //No sorting
             return query;
         }
-
+        */
         /// <summary>
         /// Should apply paging if needed.
         /// </summary>
         /// <param name="query">The query.</param>
         /// <param name="input">The input.</param>
+        /// 
+        /*
         protected virtual IQueryable<TEntity> ApplyPaging(IQueryable<TEntity> query, TGetAllInput input)
         {
             //Try to use paging if available
@@ -112,7 +119,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
             //No paging
             return query;
         }
-
+        */
         /// <summary>
         /// This method should create <see cref="IQueryable{TEntity}"/> based on given input.
         /// It should filter query if needed, but should not do sorting or paging.
@@ -120,9 +127,34 @@ namespace AuthAppDemoService.Basics.Impelmentation
         /// methods.
         /// </summary>
         /// <param name="input">The input.</param>
-        protected virtual IQueryable<TEntity> CreateFilteredQuery(TGetAllInput input)
+        protected virtual Expression<Func<TEntity, bool>> CreateFilteredQuery(TGetAllInput input)
         {
-            return Repository.GetAll();
+            //return UnitOfWork.Repository<TEntity>().GetAll();
+            var parameter = Expression.Parameter(typeof(TEntity), "x");
+            Expression expression = Expression.Constant(true); // Start with 'true' for dynamic composition
+
+            foreach (var property in typeof(TGetAllInput).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (property.Name == "OrderType" || property.Name == "PageIndex" || property.Name == "PageCount")
+                {
+                    continue; // Skip these properties
+                }
+
+                var entityProperty = typeof(TEntity).GetProperty(property.Name);
+                if (entityProperty == null) continue; // Skip if no matching property
+
+                var propertyValue = property.GetValue(null);//property.GetValue(filter, null);
+                if (propertyValue == null) continue; // Skip null values
+
+                var leftSide = Expression.Property(parameter, entityProperty.Name);
+                var rightSide = Expression.Constant(propertyValue);
+
+                var equalExpression = Expression.Equal(leftSide, rightSide);
+                expression = Expression.AndAlso(expression, equalExpression);
+            }
+
+            var finalExpression = Expression.Lambda<Func<TEntity, bool>>(expression, parameter);
+            return finalExpression;
         }
 
         /// <summary>
@@ -161,8 +193,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<int>
         where TEntityDto : IEntityDto<int>
     {
-        protected AsyncCrudAppService(IRepository<TEntity, int> repository)
-            : base(repository)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
 
         }
@@ -173,8 +205,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity> repository)
-            : base(repository)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
 
         }
@@ -185,8 +217,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity> repository)
-            : base(repository)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
 
         }
@@ -199,8 +231,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntityDto : IEntityDto<TPrimaryKey>
        where TCreateInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity> repository)
-            : base(repository)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
 
         }
@@ -212,8 +244,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntityDto : IEntityDto<TPrimaryKey>
         where TUpdateInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity> repository)
-            : base(repository)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
 
         }
@@ -226,8 +258,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TUpdateInput : IEntityDto<TPrimaryKey>
         where TGetInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IRepository<TEntity> repository)
-            : base(repository)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
+            : base(unitOfWork)
         {
 
         }
@@ -269,17 +301,24 @@ namespace AuthAppDemoService.Basics.Impelmentation
 
             var query = CreateFilteredQuery(input);
 
-            var totalCount = await UnitOfWork.Repository<TEntity>().Count(); //AsyncQueryableExecuter.CountAsync(query);
-
-            query = ApplySorting(query, input);
-            query = ApplyPaging(query, input);
-
-            var entities = await AsyncQueryableExecuter.ToListAsync(query);
+            //long totalCount = await UnitOfWork.Repository<TEntity>().Count(); //AsyncQueryableExecuter.CountAsync(query);
+            var result = await UnitOfWork.Repository<TEntity>().GetPagination(query, KeyOrder: null ,orderBy: Enum_DB_Order_By.Ascending,0,0);
 
             return new PagedResultDto<TEntityDto>(
-                totalCount,
-                entities.Select(MapToEntityDto).ToList()
+                result.Total_Count ,
+                result.Data as IReadOnlyList<TEntityDto>
             );
+            /*
+            query = ApplySorting(query, input);
+            query = ApplyPaging(query, input);
+            */
+
+            //var entities = await query.DefaultIfEmpty().ToListAsync();//AsyncQueryableExecuter.ToListAsync(query);
+
+            //return new PagedResultDto<TEntityDto>(
+            //    totalCount,
+            //    entities.Select(MapToEntityDto).ToList()
+            //);
         }
 
         public virtual async Task<TEntityDto> CreateAsync(TCreateInput input)
@@ -288,8 +327,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
 
             var entity = MapToEntity(input);
 
-            await Repository.InsertAsync(entity);
-            await UnitOfWork.SaveChangesAsync();
+            await UnitOfWork.Repository<TEntity>().Insert(entity);
+            UnitOfWork.SaveChangesAsync();
 
             return MapToEntityDto(entity);
         }
@@ -301,7 +340,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
             var entity = await GetEntityByIdAsync(input.Id);
 
             MapToEntity(input, entity);
-            await UnitOfWork.SaveChangesAsync();
+            UnitOfWork.SaveChangesAsync();
 
             return MapToEntityDto(entity);
         }
@@ -310,12 +349,12 @@ namespace AuthAppDemoService.Basics.Impelmentation
         {
             //CheckDeletePermission();
 
-            return await UnitOfWork.Repository<TEntity>().DeleteAsync(input.Id);
+            await UnitOfWork.Repository<TEntity>().Delete(x=>x.Id.Equals(input.Id));
         }
 
-        protected virtual Task<TEntity> GetEntityByIdAsync(TPrimaryKey id)
-        {
-            return await Repository.GetAsync(id);
+        protected virtual async Task<TEntity> GetEntityByIdAsync(TPrimaryKey id)
+        {   
+             return await UnitOfWork.Repository<TEntity>().GetSingle(x=>x.Id.Equals(id));
         }
     }
 

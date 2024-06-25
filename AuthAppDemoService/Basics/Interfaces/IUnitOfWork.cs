@@ -20,7 +20,7 @@ namespace AuthAppDemoService.Basics.Interfaces
 
         List<int> SaveChanges();
 
-        Task<List<int>> SaveChangesAsync();
+        List<Task<int>> SaveChangesAsync();
 
         #endregion
 
@@ -29,11 +29,9 @@ namespace AuthAppDemoService.Basics.Interfaces
         #region DB Context Transaction Operations 
 
         void BeginTransaction();
-        Task BeginTransactionAsync();
         void Rollback();
-        Task RollbackAsync();
         List<int> Commit();
-        Task<List<int>> CommitAsync();
+        List<Task<int>> CommitAsync();
 
         #endregion
        

@@ -102,7 +102,7 @@ namespace AuthAppDemoService.Basics.Dtos
         //
         // Summary:
         //     Total count of Items.
-        int TotalCount { get; set; }
+        long TotalCount { get; set; }
     }
 
 }
