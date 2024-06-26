@@ -60,9 +60,10 @@ namespace AuthAppDemoService.Basics.Impelmentation
         //    Repository = repository;
         //}
 
-        protected CrudAppServiceBase(IUnitOfWork unitOfWork)
+        protected CrudAppServiceBase(IUnitOfWork unitOfWork,IObjectMapper objectMapper)
         {
             UnitOfWork = unitOfWork;
+            ObjectMapper = objectMapper;    
         }
         /// <summary>
         /// Should apply sorting if needed.
@@ -193,8 +194,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<int>
         where TEntityDto : IEntityDto<int>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
+            : base(unitOfWork, objectMapper)
         {
 
         }
@@ -205,8 +206,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
+            : base(unitOfWork, objectMapper)
         {
 
         }
@@ -217,8 +218,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
+            : base(unitOfWork, objectMapper)
         {
 
         }
@@ -231,8 +232,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntityDto : IEntityDto<TPrimaryKey>
        where TCreateInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
+            : base(unitOfWork, objectMapper)
         {
 
         }
@@ -244,8 +245,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntityDto : IEntityDto<TPrimaryKey>
         where TUpdateInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
+            : base(unitOfWork, objectMapper)
         {
 
         }
@@ -258,8 +259,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TUpdateInput : IEntityDto<TPrimaryKey>
         where TGetInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
+            : base(unitOfWork, objectMapper)
         {
 
         }
@@ -281,8 +282,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         //{
         //    AsyncQueryableExecuter = NullAsyncQueryableExecuter.Instance;
         //}
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork)
-            : base(unitOfWork)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
+            : base(unitOfWork, objectMapper)
         {
             
         }
