@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthAppDemoService
+namespace AuthAppDemoService.Helpers
 {
     public class LoginDto
     {
-        public string UserId { get; set; }  
+        public string UserId { get; set; }
         public string UserName { get; set; }
         public string AccessToken { get; set; }
 

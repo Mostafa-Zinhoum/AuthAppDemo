@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthAppDemoService
+namespace AuthAppDemoService.Helpers
 {
     public class JwtInfo
     {

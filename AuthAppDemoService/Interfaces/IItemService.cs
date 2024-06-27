@@ -1,6 +1,6 @@
 ﻿using AuthAppDemoService.Basics.Dtos;
 using AuthAppDemoService.Basics.Interfaces;
-using AuthAppDemoService.Basics.ServiceDto;
+using AuthAppDemoService.ServiceDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;

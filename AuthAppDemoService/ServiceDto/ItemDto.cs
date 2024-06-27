@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthAppDemoService.Basics.ServiceDto
+namespace AuthAppDemoService.ServiceDto
 {
     public class ItemDto : IEntityDto<long>
     {
-        public long Id { get ; set ; }
+        public long Id { get; set; }
         public string Name { get; set; }
     }
     public class CreateItemDto : CreateEntityDto<long>

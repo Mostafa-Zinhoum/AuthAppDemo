@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthAppDemoService
+namespace AuthAppDemoService.Helpers
 {
     public static class Encryption
     {
@@ -59,9 +59,9 @@ namespace AuthAppDemoService
 
                     using (MemoryStream memoryStream = new MemoryStream())
                     {
-                        using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
+                        using (CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
                         {
-                            using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
+                            using (StreamWriter streamWriter = new StreamWriter(cryptoStream))
                             {
                                 streamWriter.Write(Clear_Text);
                             }
@@ -102,9 +102,9 @@ namespace AuthAppDemoService
 
                     using (MemoryStream memoryStream = new MemoryStream(buffer))
                     {
-                        using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
+                        using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
                         {
-                            using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
+                            using (StreamReader streamReader = new StreamReader(cryptoStream))
                             {
                                 try { Clear_Text = streamReader.ReadToEnd(); } catch { return null; }
                             }
@@ -130,11 +130,11 @@ namespace AuthAppDemoService
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
                 byte[] encryptedBytes;
-                using (var msEncrypt = new System.IO.MemoryStream())
+                using (var msEncrypt = new MemoryStream())
                 {
                     using (var csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (var swEncrypt = new System.IO.StreamWriter(csEncrypt))
+                        using (var swEncrypt = new StreamWriter(csEncrypt))
                         {
                             swEncrypt.Write(value);
                         }
@@ -157,11 +157,11 @@ namespace AuthAppDemoService
 
                 byte[] encryptedBytes = Convert.FromBase64String(encryptedValue);
                 string decryptedValue;
-                using (var msDecrypt = new System.IO.MemoryStream(encryptedBytes))
+                using (var msDecrypt = new MemoryStream(encryptedBytes))
                 {
                     using (var csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
                     {
-                        using (var srDecrypt = new System.IO.StreamReader(csDecrypt))
+                        using (var srDecrypt = new StreamReader(csDecrypt))
                         {
                             decryptedValue = srDecrypt.ReadToEnd();
                         }

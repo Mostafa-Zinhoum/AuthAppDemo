@@ -16,6 +16,7 @@ public partial class AuthDemo01Context : DbContext
     }
 
     public virtual DbSet<UserInfo> Users { get; set; }
+    public virtual DbSet<Item> Items { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

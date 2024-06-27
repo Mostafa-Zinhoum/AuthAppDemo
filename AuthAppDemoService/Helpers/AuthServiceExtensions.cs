@@ -12,7 +12,7 @@ using AuthAppDemoService.Basics.Impelmentation;
 using AuthAppDemoService.Basics.Interfaces;
 using System.Reflection;
 
-namespace AuthAppDemoService
+namespace AuthAppDemoService.Helpers
 {
     public static class AuthServiceExtensions
     {

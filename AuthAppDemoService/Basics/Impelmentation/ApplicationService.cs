@@ -1,17 +1,10 @@
 ﻿using AuthAppDemoService.Basics.Dtos;
 using AuthAppDemoService.Basics.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using AuthAppDemoDBInfra;
-using AuthAppDemoService.Basics.ServiceDto;
+
 
 namespace AuthAppDemoService.Basics.Impelmentation
 {
@@ -319,17 +312,6 @@ namespace AuthAppDemoService.Basics.Impelmentation
                 result.Total_Count ,
                 result.Data as IReadOnlyList<TEntityDto>
             );
-            /*
-            query = ApplySorting(query, input);
-            query = ApplyPaging(query, input);
-            */
-
-            //var entities = await query.DefaultIfEmpty().ToListAsync();//AsyncQueryableExecuter.ToListAsync(query);
-
-            //return new PagedResultDto<TEntityDto>(
-            //    totalCount,
-            //    entities.Select(MapToEntityDto).ToList()
-            //);
         }
 
         public virtual async Task<TEntityDto> CreateAsync(TCreateInput input)
@@ -338,8 +320,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
 
             var entity = MapToEntity(input);
 
-            await UnitOfWork.Repository<TEntity>().Insert(entity);
-            UnitOfWork.SaveChangesAsync();
+            entity = await UnitOfWork.Repository<TEntity>().Insert(entity);
+            UnitOfWork.SaveChanges();
 
             return MapToEntityDto(entity);
         }
@@ -351,7 +333,7 @@ namespace AuthAppDemoService.Basics.Impelmentation
             var entity = await GetEntityByIdAsync(input.Id);
 
             MapToEntity(input, entity);
-            UnitOfWork.SaveChangesAsync();
+            UnitOfWork.SaveChanges();
 
             return MapToEntityDto(entity);
         }

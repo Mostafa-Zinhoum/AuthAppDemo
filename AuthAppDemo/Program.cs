@@ -1,5 +1,3 @@
-
-using AuthAppDemoService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -9,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using AuthAppDemoDB.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using AuthAppDemoService.Helpers;
+using AuthAppDemoService;
+using Microsoft.AspNetCore.Hosting;
 
 namespace AuthAppDemo
 {
@@ -34,6 +35,8 @@ namespace AuthAppDemo
                     ServiceLifetime.Scoped);
 
             //builder.Services.AddSqlServer<AuthDemo01Context>(builder.Configuration.GetConnectionString("main"));
+
+            builder.Services.AddAutoMapper(typeof(WorxMapperProfile));
 
             builder.Services.AddSingleton(jwtInfo);
 

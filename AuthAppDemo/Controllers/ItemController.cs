@@ -1,7 +1,7 @@
 ﻿using AuthAppDemoLog;
 using AuthAppDemoService.Basics.Dtos;
-using AuthAppDemoService.Basics.ServiceDto;
 using AuthAppDemoService.Interfaces;
+using AuthAppDemoService.ServiceDto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
