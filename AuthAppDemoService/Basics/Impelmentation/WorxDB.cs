@@ -57,13 +57,18 @@ namespace AuthAppDemoService.Basics.Impelmentation
 
             foreach (var DBDic in _ContextStore)
             {
-                Type DBType = DBDic.Key;
-                DbContext DB = (DbContext)_ServiceProvider.GetService(DBType);
-
-                var EntitiesList = DB.Model.GetEntityTypes().Select(t => t.ClrType).ToList();
-                foreach (var ent in EntitiesList)
+                
+                    Type DBType = DBDic.Key;
+                //DbContext DB = (DbContext)_ServiceProvider.GetService(DBType);
+                var DBservice = _ServiceProvider.GetService(DBType);
+                if (DBservice is DbContext DB)
                 {
-                    _EntitiesStore.Add(ent.Name, DB.GetType().Name);
+
+                    var EntitiesList = DB.Model.GetEntityTypes().Select(t => t.ClrType).ToList();
+                    foreach (var ent in EntitiesList)
+                    {
+                        _EntitiesStore.Add(ent.Name, DB.GetType().Name);
+                    }
                 }
             }
         }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using AuthAppDemoDB.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace AuthAppDemo
 {
@@ -39,6 +40,9 @@ namespace AuthAppDemo
             // add AuthAppDemoServices Injection by call extension method from AuthAppDemoServices Project
             // I do that to hide Service Impelmention calling form controllers
             builder.Services.AddAuthSerices(jwtInfo, DBServices);
+
+            // Register all application services automatically
+            builder.Services.AddApplicationServices();
 
 
 

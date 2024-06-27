@@ -10,6 +10,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AuthAppDemoDBInfra;
+using AuthAppDemoService.Basics.ServiceDto;
 
 namespace AuthAppDemoService.Basics.Impelmentation
 {
@@ -48,17 +50,25 @@ namespace AuthAppDemoService.Basics.Impelmentation
     /// This is a common base class for CrudAppService and AsyncCrudAppService classes.
     /// Inherit either from CrudAppService or AsyncCrudAppService, not from this class.
     /// </summary>
-    public abstract class CrudAppServiceBase<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput> : ApplicationService
+    public abstract class CrudAppServiceBase<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput> : IApplicationService //,ApplicationService
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
         where TUpdateInput : IEntityDto<TPrimaryKey>
     {
-        //protected readonly IRepository<TEntity> Repository;
+        /// <summary>
+        /// Reference to the logger to write logs.
+        /// </summary>
+        public readonly ILogger Logger;
 
-        //protected CrudAppServiceBase(IRepository<TEntity> repository)
-        //{
-        //    Repository = repository;
-        //}
+        /// <summary>
+        /// Reference to the object to object mapper.
+        /// </summary>
+        public readonly IObjectMapper ObjectMapper;
+
+        /// <summary>
+        /// Reference to <see cref="IUnitOfWork"/>.
+        /// </summary>
+        public readonly IUnitOfWork UnitOfWork;
 
         protected CrudAppServiceBase(IUnitOfWork unitOfWork,IObjectMapper objectMapper)
         {

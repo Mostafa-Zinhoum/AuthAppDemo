@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System;
 using System.Collections.Generic;
+using AuthAppDemoDBInfra;
 
 namespace AuthAppDemoDB.Models;
 
-public partial class Item
+public partial class Item : IEntity<long>
 {
     public long Id { get; set; }
 

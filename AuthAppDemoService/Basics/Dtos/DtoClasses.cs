@@ -92,6 +92,22 @@ namespace AuthAppDemoService.Basics.Dtos
         }
     }
 
+    [Serializable]
+    public class CreateEntityDto<TPrimaryKey> : EntityDto<TPrimaryKey>
+    {
+        public long? CreateuserId { get; set; }
+
+        public DateTime? CreateDate { get => DateTime.UtcNow;  }
+    }
+
+    [Serializable]
+    public class UpdateEntityDto<TPrimaryKey> : EntityDto<TPrimaryKey>
+    {
+        public long? UpdateUserId { get; set; }
+
+        public DateTime? UpdateDate { get => DateTime.UtcNow; }
+    }
+
     /// <summary>
     /// Implements <see cref="IPagedResult{T}"/>.
     /// </summary>

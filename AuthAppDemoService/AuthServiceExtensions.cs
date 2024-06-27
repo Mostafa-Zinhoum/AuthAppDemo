@@ -10,12 +10,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AuthAppDemoService.Basics.Impelmentation;
 using AuthAppDemoService.Basics.Interfaces;
+using System.Reflection;
 
 namespace AuthAppDemoService
 {
     public static class AuthServiceExtensions
     {
-        public static IServiceCollection AddAuthSerices(this IServiceCollection services,
+        public static void AddAuthSerices(this IServiceCollection services,
             JwtInfo jwtInfo, IServiceCollection DBServices)
         {
             // Register AutoMapper
@@ -24,9 +25,9 @@ namespace AuthAppDemoService
             // Register IObjectMapper
             services.AddScoped<IObjectMapper, ObjectMapper>();
 
-
             services.AddSingleton<IAuthorize, Authorize>();
             services.AddSingleton<IUserService, UserService>();
+
             services.AddScoped<IWorxDB>(x =>
                     new WorxDB(services, DBServices)
                 );
@@ -64,7 +65,36 @@ namespace AuthAppDemoService
                 }
 
                 );
-            return services;
+            //return services;
+        }
+
+        public static void AddApplicationServices(this IServiceCollection services)
+        {
+            var serviceType = typeof(IApplicationService);
+            var assembly = Assembly.GetExecutingAssembly();
+
+            var implementations = assembly.GetTypes()
+            .Where(t => serviceType.IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+
+            foreach (var implementation in implementations)
+            {
+                var interfaceTypes = implementation.GetInterfaces();
+                //.FirstOrDefault(i => i != serviceType && serviceType.IsAssignableFrom(i));
+
+                var interfaceType = interfaceTypes.FirstOrDefault(i => i != serviceType && i.Name.EndsWith(implementation.Name));//.FirstOrDefault(i => i != serviceType && serviceType.IsAssignableFrom(i));
+                if (interfaceType != null)
+                {
+                    services.AddScoped(interfaceType, implementation);
+                }
+                else
+                {
+                    services.AddScoped(serviceType, implementation);
+                }
+            }
+
         }
     }
 }
+
+
+

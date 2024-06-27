@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthAppDemoDB", "AuthAppDem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthAppDemoService", "AuthAppDemoService\AuthAppDemoService.csproj", "{DA004A86-B5C4-480F-A781-EEF9CD707B22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthAppDemoLog", "AuthAppDemoLog\AuthAppDemoLog.csproj", "{20C127E7-C3FB-4F0F-85C7-9CAC59946F58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthAppDemoLog", "AuthAppDemoLog\AuthAppDemoLog.csproj", "{20C127E7-C3FB-4F0F-85C7-9CAC59946F58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthAppDemoDBInfra", "AuthAppDemoDBInfra\AuthAppDemoDBInfra.csproj", "{5E3E35BC-6621-4444-8A20-2AE7ADE8ECCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{20C127E7-C3FB-4F0F-85C7-9CAC59946F58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20C127E7-C3FB-4F0F-85C7-9CAC59946F58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20C127E7-C3FB-4F0F-85C7-9CAC59946F58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E3E35BC-6621-4444-8A20-2AE7ADE8ECCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E3E35BC-6621-4444-8A20-2AE7ADE8ECCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E3E35BC-6621-4444-8A20-2AE7ADE8ECCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E3E35BC-6621-4444-8A20-2AE7ADE8ECCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

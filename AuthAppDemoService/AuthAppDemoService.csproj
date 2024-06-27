@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthAppDemoDBInfra\AuthAppDemoDBInfra.csproj" />
     <ProjectReference Include="..\AuthAppDemoDB\AuthAppDemoDB.csproj" />
     <ProjectReference Include="..\AuthAppDemoLog\AuthAppDemoLog.csproj" />
   </ItemGroup>
