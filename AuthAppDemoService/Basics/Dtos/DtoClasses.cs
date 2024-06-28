@@ -93,7 +93,7 @@ namespace AuthAppDemoService.Basics.Dtos
     }
 
     [Serializable]
-    public class CreateEntityDto<TPrimaryKey> : EntityDto<TPrimaryKey>
+    public class CreateEntityDto<TPrimaryKey> : EntityDto<TPrimaryKey>,ICreateEntityDto<TPrimaryKey>
     {
         public long? CreateuserId { get; set; }
 
@@ -101,7 +101,7 @@ namespace AuthAppDemoService.Basics.Dtos
     }
 
     [Serializable]
-    public class UpdateEntityDto<TPrimaryKey> : EntityDto<TPrimaryKey>
+    public class UpdateEntityDto<TPrimaryKey> : EntityDto<TPrimaryKey>,IUpdateEntityDto<TPrimaryKey>
     {
         public long? UpdateUserId { get; set; }
 

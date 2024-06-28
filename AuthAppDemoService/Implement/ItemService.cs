@@ -3,6 +3,7 @@ using AuthAppDemoDBInfra;
 using AuthAppDemoService.Basics.Dtos;
 using AuthAppDemoService.Basics.Impelmentation;
 using AuthAppDemoService.Basics.Interfaces;
+using AuthAppDemoService.Helpers;
 using AuthAppDemoService.Interfaces;
 using AuthAppDemoService.ServiceDto;
 using System;
@@ -15,8 +16,8 @@ namespace AuthAppDemoService.Implement
 {
     public class ItemService : AsyncCrudAppService<Item, ItemDto, long, EntityDto<long>, CreateItemDto, UpdateItemDto>,IItemService//,IApplicationService
     {
-        public ItemService(IUnitOfWork unitOfWork,IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        public ItemService(IUnitOfWork unitOfWork,IObjectMapper objectMapper,WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
             { 
         }
     }

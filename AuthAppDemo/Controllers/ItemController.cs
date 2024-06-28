@@ -11,7 +11,7 @@ namespace AuthAppDemo.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [LogAspect]
-    //[Authorize]
+    [Authorize]
     public class ItemController : ControllerBase
     {
         protected IItemService itemService;

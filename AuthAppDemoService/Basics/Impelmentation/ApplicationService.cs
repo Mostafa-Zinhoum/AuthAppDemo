@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.Reflection;
 using AuthAppDemoDBInfra;
+using AuthAppDemoService.Helpers;
 
 
 namespace AuthAppDemoService.Basics.Impelmentation
@@ -23,50 +24,39 @@ namespace AuthAppDemoService.Basics.Impelmentation
         /// <summary>
         /// Reference to <see cref="IUnitOfWorkManager"/>.
         /// </summary>
-        public IUnitOfWork UnitOfWork
-        {
-            get
-            {
-                if (_unitOfWork == null)
-                {
-                    throw new Exception("Must set UnitOfWorkManager before use it.");
-                }
-
-                return _unitOfWork;
-            }
-            set { _unitOfWork = value; }
-        }
-        private IUnitOfWork _unitOfWork;
+        public IUnitOfWork UnitOfWork { get; set; }
+        public WorxSession WorxSessionInfo { get; set; }
     }
 
     /// <summary>
     /// This is a common base class for CrudAppService and AsyncCrudAppService classes.
     /// Inherit either from CrudAppService or AsyncCrudAppService, not from this class.
     /// </summary>
-    public abstract class CrudAppServiceBase<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput> : IApplicationService //,ApplicationService
+    public abstract class CrudAppServiceBase<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput> : ApplicationService,IApplicationService
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
         where TUpdateInput : IEntityDto<TPrimaryKey>
     {
-        /// <summary>
-        /// Reference to the logger to write logs.
-        /// </summary>
-        public readonly ILogger Logger;
+        ///// <summary>
+        ///// Reference to the logger to write logs.
+        ///// </summary>
+        //public readonly ILogger Logger;
 
-        /// <summary>
-        /// Reference to the object to object mapper.
-        /// </summary>
-        public readonly IObjectMapper ObjectMapper;
+        ///// <summary>
+        ///// Reference to the object to object mapper.
+        ///// </summary>
+        //public readonly IObjectMapper ObjectMapper;
 
-        /// <summary>
-        /// Reference to <see cref="IUnitOfWork"/>.
-        /// </summary>
-        public readonly IUnitOfWork UnitOfWork;
+        ///// <summary>
+        ///// Reference to <see cref="IUnitOfWork"/>.
+        ///// </summary>
+        //public readonly IUnitOfWork UnitOfWork;
 
-        protected CrudAppServiceBase(IUnitOfWork unitOfWork,IObjectMapper objectMapper)
+        protected CrudAppServiceBase(IUnitOfWork unitOfWork,IObjectMapper objectMapper, WorxSession worxSession)
         {
             UnitOfWork = unitOfWork;
-            ObjectMapper = objectMapper;    
+            ObjectMapper = objectMapper;
+            WorxSessionInfo = worxSession;
         }
         /// <summary>
         /// Should apply sorting if needed.
@@ -197,8 +187,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<int>
         where TEntityDto : IEntityDto<int>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper, WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
         {
 
         }
@@ -209,34 +199,34 @@ namespace AuthAppDemoService.Basics.Impelmentation
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper, WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
         {
 
         }
     }
 
     public abstract class AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput>
-        : AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TEntityDto, TEntityDto>
+        : AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, CreateEntityDto<TPrimaryKey>, UpdateEntityDto<TPrimaryKey>>
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper, WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
         {
 
         }
     }
 
     public abstract class AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput>
-        : AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TCreateInput>
+        : AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, UpdateEntityDto<TPrimaryKey>>
         where TGetAllInput : IPagedAndSortedResultRequest
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
-       where TCreateInput : IEntityDto<TPrimaryKey>
+       where TCreateInput : ICreateEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper, WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
         {
 
         }
@@ -246,10 +236,11 @@ namespace AuthAppDemoService.Basics.Impelmentation
         : AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput, EntityDto<TPrimaryKey>>
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
-        where TUpdateInput : IEntityDto<TPrimaryKey>
+        where TCreateInput : ICreateEntityDto<TPrimaryKey>
+        where TUpdateInput : IUpdateEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper, WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
         {
 
         }
@@ -259,11 +250,12 @@ namespace AuthAppDemoService.Basics.Impelmentation
     : AsyncCrudAppService<TEntity, TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput, TGetInput, EntityDto<TPrimaryKey>>
         where TEntity : class, IEntity<TPrimaryKey>
         where TEntityDto : IEntityDto<TPrimaryKey>
-        where TUpdateInput : IEntityDto<TPrimaryKey>
+        where TCreateInput : ICreateEntityDto<TPrimaryKey>
+        where TUpdateInput : IUpdateEntityDto<TPrimaryKey>
         where TGetInput : IEntityDto<TPrimaryKey>
     {
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper, WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
         {
 
         }
@@ -274,7 +266,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         IAsyncCrudAppService<TEntityDto, TPrimaryKey, TGetAllInput, TCreateInput, TUpdateInput, TGetInput, TDeleteInput>
            where TEntity : class, IEntity<TPrimaryKey>
            where TEntityDto : IEntityDto<TPrimaryKey>
-           where TUpdateInput : IEntityDto<TPrimaryKey>
+           where TCreateInput : ICreateEntityDto<TPrimaryKey>
+           where TUpdateInput : IUpdateEntityDto<TPrimaryKey>
            where TGetInput : IEntityDto<TPrimaryKey>
            where TDeleteInput : IEntityDto<TPrimaryKey>
     {
@@ -285,8 +278,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         //{
         //    AsyncQueryableExecuter = NullAsyncQueryableExecuter.Instance;
         //}
-        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper)
-            : base(unitOfWork, objectMapper)
+        protected AsyncCrudAppService(IUnitOfWork unitOfWork, IObjectMapper objectMapper, WorxSession worxSession)
+            : base(unitOfWork, objectMapper, worxSession)
         {
             
         }
@@ -318,6 +311,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         {
             //CheckCreatePermission();
 
+            input.CreateuserId = WorxSessionInfo?.UserId;
+
             var entity = MapToEntity(input);
 
             entity = await UnitOfWork.Repository<TEntity>().Insert(entity);
@@ -329,6 +324,8 @@ namespace AuthAppDemoService.Basics.Impelmentation
         public virtual async Task<TEntityDto> UpdateAsync(TUpdateInput input)
         {
             //CheckUpdatePermission();
+
+            input.UpdateUserId = WorxSessionInfo?.UserId;
 
             var entity = await GetEntityByIdAsync(input.Id);
 

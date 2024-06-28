@@ -26,7 +26,10 @@ namespace AuthAppDemoService.Helpers
             services.AddScoped<IObjectMapper, ObjectMapper>();
 
             services.AddSingleton<IAuthorize, Authorize>();
-            services.AddSingleton<IUserService, UserService>();
+
+            // Register the WorxSession service
+            services.AddScoped<WorxSession>();
+
 
             services.AddScoped<IWorxDB>(x =>
                     new WorxDB(services, DBServices)

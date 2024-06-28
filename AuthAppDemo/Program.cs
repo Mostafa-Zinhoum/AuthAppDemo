@@ -10,6 +10,8 @@ using System.Reflection;
 using AuthAppDemoService.Helpers;
 using AuthAppDemoService;
 using Microsoft.AspNetCore.Hosting;
+using System.Threading.RateLimiting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AuthAppDemo
 {
@@ -39,6 +41,8 @@ namespace AuthAppDemo
             builder.Services.AddAutoMapper(typeof(WorxMapperProfile));
 
             builder.Services.AddSingleton(jwtInfo);
+
+            
 
             // add AuthAppDemoServices Injection by call extension method from AuthAppDemoServices Project
             // I do that to hide Service Impelmention calling form controllers
@@ -77,6 +81,9 @@ namespace AuthAppDemo
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            // using WorxSessionMiddleware to Set Session Info
+            app.UseMiddleware<WorxSessionMiddleware>();
 
             app.MapControllers();
 

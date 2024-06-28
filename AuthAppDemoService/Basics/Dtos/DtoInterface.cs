@@ -59,6 +59,48 @@ namespace AuthAppDemoService.Basics.Dtos
         //     Id of the entity.
         TPrimaryKey Id { get; set; }
     }
+
+    //
+    // Summary:
+    //     Defines common properties for Create entity based DTOs.
+    //
+    // Type parameters:
+    //   TPrimaryKey:
+    public interface ICreateEntityDto<TPrimaryKey> : IEntityDto<TPrimaryKey>
+    {
+
+        //
+        // Summary:
+        //     user Id of the Session.
+        public long? CreateuserId { get; set; }
+
+        //
+        // Summary:
+        //     CreateDate of the Session.
+        public DateTime? CreateDate { get; }
+
+    }
+
+    //
+    // Summary:
+    //     Defines common properties for Update entity based DTOs.
+    //
+    // Type parameters:
+    //   TPrimaryKey:
+    public interface IUpdateEntityDto<TPrimaryKey> : IEntityDto<TPrimaryKey>
+    {
+        //
+        // Summary:
+        //     user Id of the Session.
+        public long? UpdateUserId { get; set; }
+        //
+        // Summary:
+        //     UpdateDate of the Session.
+        public DateTime? UpdateDate { get; }
+
+    }
+
+
     //
     // Summary:
     //     A shortcut of Abp.Application.Services.Dto.IEntityDto`1 for most used primary

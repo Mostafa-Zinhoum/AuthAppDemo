@@ -6,42 +6,45 @@ using System.Text;
 using System.Threading.Tasks;
 using AuthAppDemoLog;
 using AuthAppDemoService.Helpers;
+using AuthAppDemoService.Basics.Interfaces;
+using AuthAppDemoService.Basics.Impelmentation;
+using AuthAppDemoDBInfra;
 
 namespace AuthAppDemoService
 {
     [LogAspect]
-    internal class UserService : IUserService
+    internal class UserService : ApplicationService, IUserService
     {
-        public LoginDto GetUser(GetUserRequest Param)
-        {
-            using (AuthDemo01Context db = new AuthDemo01Context())
-            {
-                var user = db.Users.FirstOrDefault(x => x.Id == Param.UserId);
-                if (user != null)
-                    return new LoginDto
-                    {
-                        UserId = user.Id.ToString(),
-                        UserName = user.Name
-                    };
 
-                return null;
-            }
+        public UserService(IUnitOfWork unitOfWork)
+        {
+            UnitOfWork = unitOfWork;
+        }
+        public async Task<LoginDto> GetUser(GetUserRequest Param)
+        {
+
+            var user = await UnitOfWork.Repository<UserInfo>().GetSingle(x => x.Id == Param.UserId);
+            if (user != null)
+                return new LoginDto
+                {
+                    UserId = user.Id.ToString(),
+                    UserName = user.Name
+                };
+
+            return null;
         }
 
-        public LoginDto Login(LoginRequest Param)
+        public async Task<LoginDto> Login(LoginRequest Param)
         {
-            using (AuthDemo01Context db = new AuthDemo01Context())
-            {
-                var user = db.Users.FirstOrDefault(x => x.Name == Param.LoginName && x.Password == Param.LoginPassword);
-                if (user != null)
-                    return new LoginDto
-                    {
-                        UserId = user.Id.ToString(),
-                        UserName = user.Name
-                    };
+            var user = await UnitOfWork.Repository<UserInfo>().GetSingle(x => x.Name == Param.LoginName && x.Password == Param.LoginPassword);
+            if (user != null)
+                return new LoginDto
+                {
+                    UserId = user.Id.ToString(),
+                    UserName = user.Name
+                };
 
-                return null;
-            }
+            return null;
         }
     }
 }

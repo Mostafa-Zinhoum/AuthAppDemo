@@ -26,7 +26,7 @@ namespace AuthAppDemo.Controllers
 
         [HttpPost(Name ="Login")]
         
-        public LoginDto Login(LoginRequest param) 
+        public async Task<LoginDto> Login(LoginRequest param) 
         {
 
             var customLogState = new CustomLogState
@@ -43,7 +43,7 @@ namespace AuthAppDemo.Controllers
 
 
 
-            var userInfo = userService.Login(param);
+            var userInfo = await userService.Login(param);
             if (userInfo != null)
             {
                 userInfo.AccessToken = authService.CreateAccessToken(new TokenInfoDto { UserId = userInfo.UserId,UserName = userInfo.UserName});
@@ -56,14 +56,14 @@ namespace AuthAppDemo.Controllers
         [Authorize]
         [HttpPost(Name = "GetUser")]
         
-        public LoginDto GetUser(GetUserRequest param)
+        public async Task<LoginDto> GetUser(GetUserRequest param)
         {
             /*
             _logger.LogInformation("This is an informational log message.");
             _logger.LogWarning("This is a warning log message.");
             _logger.LogError("This is an error log message.");
             */
-            var userInfo = userService.GetUser(param);
+            var userInfo = await userService.GetUser(param);
             return userInfo;
         }
     }
